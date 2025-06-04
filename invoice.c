@@ -1,24 +1,67 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "invoice.h"
 
-int checkInvoiceValidity(Invoice inv){
+Invoice *generateInvoices(int num){
+	Invoice *generated_list = malloc(sizeof(Invoice)*num);
 	
-	Invoice i1,i2,i3,i4,i5;
+
+	for(int i = 0; i < num; i++){
+		sprintf(generated_list[i].customerid, CUSTOMERID_ALGORITHM, i%2, i%3,i%5, i%1);
+	}
+	for(int i = 0; i < num; i++){
+		sprintf(generated_list[i].timeref, TIMEREF_ALGORITHM, i, i);
+		generated_list[i].timeref[4] = '\0';
+	}
+	for(int i = 0; i < num; i++){
+		generated_list[i].price =  PRICE_ALGORITHM;
+	}
 	
-	Invoice listinv[] = {i1,i2,i3,i4,i5};
+//	printInv(generated_list, num);
+	return generated_list;
+}
+
+void printInv(Invoice *inv_list, int num){
+	for(int i = 0; i < num; i++){
+		printf("==== INVOICEGEN INVOICE NR %d ====\n", i);
+		printf("INVOICEGEN customerid %s\n", inv_list[i].customerid);
+		printf("INVOICEGEN timeref %s\n", inv_list[i].timeref);
+		printf("INVOICEGEN price %.2f\n\n", inv_list[i].price);
+	}
+
+}
+
+void printInvAtr(Invoice *inv_list, int num){
+	for(int i = 0; i < num; i++){
+		printf("INVOICEGEN customerid %s\n", inv_list[i].customerid);
+	}
+	for(int i = 0; i < num; i++){
+		printf("INVOICEGEN timeref %s\n", inv_list[i].timeref);
+	}
+	for(int i = 0; i < num; i++){
+		printf("INVOICEGEN price %.2f\n", inv_list[i].price);
+	}
+}
+
+int checkInvoiceValidity(Invoice inv, Invoice *invoiceList){
+	
+//	Invoice i1,i2,i3,i4,i5;
+//	
+//	Invoice listinv[] = {i1,i2,i3,i4,i5};
 	
 	if(!checkDateValidity(inv)){
 		return 0;
 	}
 	
-	for(int i = 0; i < 5; i++){
-		sprintf(listinv[i].timeref, "0%d%d0", i, i);
-	}
-	
-	for(int i = 0; i < 5; i++){
-		printf("Valid invoice timeref: %s\n", listinv[i].timeref);
-	}
-	
+//	for(int i = 0; i < 5; i++){
+//		sprintf(listinv[i].timeref, "0%d%d0", i, i);
+//	}
+//	
+//	for(int i = 0; i < 5; i++){
+//		printf("Valid invoice timeref: %s\n", listinv[i].timeref);
+//	}
+//	
 	// check if they are all numbers ascii 48(0) - 57(9)
 	// check if the timeref is earlier than 0625;
 	
@@ -33,7 +76,7 @@ int checkInvoiceValidity(Invoice inv){
 	
 	
 	for(int i = 0; i < 5; i++){
-		if(strcmp(listinv[i].timeref, inv.timeref) == 0){
+		if(strcmp(invoiceList[i].timeref, inv.timeref) == 0){
 			return 1;
 		}
 	}
@@ -52,17 +95,63 @@ int checkDateValidity(Invoice inv){
 	printf("Year: %s\n", year);
 	printf("Decoded Timeref: %s, to Month: %s and Year: %s\n", inv.timeref, month, year);
 	
-	if ((decimal(year, 2)==25) && (decimal(month, 2) < 6)){
+	if ((decimal(year, 2)==C_YEAR) && (decimal(month, 2) < C_MONTH)){
 		printf("done 1\n");
 		return 1;
 	}
-	else if (decimal(year, 2) < 25 && (decimal(month, 2) <= 12)){
+	else if (decimal(year, 2) < C_YEAR && (decimal(month, 2) <= 12)){
 		printf("done 2\n");
 		return 1;
 	}
 	else {
 		printf("returning 0 from checkdateval\n");
 		printf("This date is in the future\n");
+		return 0;
+	}
+}
+
+int storeOnFile(Invoice inv[], char filename[]){
+	FILE *pf = fopen(filename,"r");
+	char buffer[255];
+	if(fgets(buffer, 255, pf) == NULL){
+		printf("Storing the data...\n");
+		fclose(pf);
+		pf = fopen(filename, "w");
+		for(int i = 0; i < 5; i++){
+			fprintf(pf, "=== INVOICE NR %d ====\n", i);
+			fprintf(filename, "%s#%s#%f\n", inv[i].customerid, inv[i].timeref, inv[i].price);
+		}
+		fclose(pf);
+		return 1; // data was stored successfully
+	}
+	else{
+		printf("Stored data will be overriden!!!\n");
+		printf("Storing the data...\n");
+		fclose(pf);
+		pf = fopen(filename, "w");
+		for(int i = 0; i < 5; i++){
+			fprintf(pf, "=== INVOICE NR %d ====\n", i);
+			fprintf(pf, "%s#%s#%f\n", inv[i].customerid, inv[i].timeref, inv[i].price);
+		}
+		fclose(pf);
+		return 2; // data was stored successfully but the previous data was overriden
+	}
+	
+	return 0; // program failed
+}
+
+int printFileContents(char filename[]){
+	FILE *pf = fopen(filename, "r");
+	char buffer[255];
+	if(pf!=NULL){
+		while(fgets(buffer, 255, pf) != NULL){
+		printf("%s", buffer);
+		}
+		fclose(pf);
+		return 1;
+	}
+	else{
+		printf("File was not opened");
 		return 0;
 	}
 }

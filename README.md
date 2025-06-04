@@ -1,5 +1,5 @@
 
-# Invoice Generator – School Project
+# Invoice Generator and Validity Checker – School Project
 
 This is a simple C project for generating, validating, and managing invoices. It was developed as part of a university assignment and demonstrates core programming concepts such as structures, file I/O, string manipulation, and dynamic memory allocation.
 

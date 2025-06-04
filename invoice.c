@@ -18,7 +18,6 @@ Invoice *generateInvoices(int num){
 		generated_list[i].price =  PRICE_ALGORITHM;
 	}
 	
-//	printInv(generated_list, num);
 	return generated_list;
 }
 
@@ -46,32 +45,17 @@ void printInvAtr(Invoice *inv_list, int num){
 
 int checkInvoiceValidity(Invoice inv, Invoice *invoiceList){
 	
-//	Invoice i1,i2,i3,i4,i5;
-//	
-//	Invoice listinv[] = {i1,i2,i3,i4,i5};
-	
+
 	if(!checkDateValidity(inv)){
 		return 0;
 	}
 	
-//	for(int i = 0; i < 5; i++){
-//		sprintf(listinv[i].timeref, "0%d%d0", i, i);
-//	}
-//	
-//	for(int i = 0; i < 5; i++){
-//		printf("Valid invoice timeref: %s\n", listinv[i].timeref);
-//	}
-//	
-	// check if they are all numbers ascii 48(0) - 57(9)
-	// check if the timeref is earlier than 0625;
-	
-	
 	char month[3] = {0};
 	char year[3] = {0};
-	prtcpy(inv.timeref, month, M_START, M_END);
-	printf("Month: %s\n",month);
 	
+	prtcpy(inv.timeref, month, M_START, M_END);
 	prtcpy(inv.timeref, year, Y_START, Y_END);
+	
 	printf("Timeref: %s, Month: %s and Year: 20%s\n", inv.timeref, month, year);
 	
 	
@@ -89,22 +73,18 @@ int checkDateValidity(Invoice inv){
 	char year[3] = {0};
 	
 	prtcpy(inv.timeref, month, M_START, M_END);
-	printf("Month: %s\n",month);
-	
 	prtcpy(inv.timeref, year, Y_START, Y_END);
-	printf("Year: %s\n", year);
-	printf("Decoded Timeref: %s, to Month: %s and Year: %s\n", inv.timeref, month, year);
 	
-	if ((decimal(year, 2)==C_YEAR) && (decimal(month, 2) < C_MONTH)){
-		printf("done 1\n");
+//	printf("Decoded Timeref: %s, to Month: %s and Year: %s\n", inv.timeref, month, year);
+	
+	if ((decimal(year, 2)==C_YEAR) && (decimal(month, 2) <= C_MONTH)){
 		return 1;
 	}
 	else if (decimal(year, 2) < C_YEAR && (decimal(month, 2) <= 12)){
-		printf("done 2\n");
 		return 1;
 	}
 	else {
-		printf("returning 0 from checkdateval\n");
+//		printf("returning 0 from checkdateval\n");
 		printf("This date is in the future\n");
 		return 0;
 	}
@@ -158,14 +138,14 @@ int printFileContents(char filename[]){
 
 void prtcpy(char src[], char dst[], int start, int end){
 	int index = 0;
-	printf("Func prtcpy called\n");
+//	printf("Func prtcpy called\n");
 	for(int i = start; i <= end; i++){
-		printf("Index value: %d ", index);
+//		printf("Index value: %d ", index);
 		dst[index] = src[i];
-		printf("value: %c\n", dst[index]);
+//		printf("value: %c\n", dst[index]);
 		index++;
 	}
-//	dst[index] = '\0';
+//	dst[index] = '\0'; Use this if you need to make sure that the dst string gets printed correctly
 }
 
 int decimal(char str[], int len){
@@ -173,9 +153,9 @@ int decimal(char str[], int len){
 	
 	for(int i = 0; i < len; i++){
 		decimal += (str[i] - '0') * pow(10, (len - i - 1));
-		printf("decimal %d: %d\n", i, decimal);
+//		printf("decimal %d: %d\n", i, decimal);
 	}
-	printf("RETURNED %s: %d\n", str, decimal);
+//	printf("RETURNED %s: %d\n", str, decimal);
 	return decimal;
 }
 
